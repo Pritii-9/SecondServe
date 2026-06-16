@@ -97,10 +97,13 @@ export function AuthForm() {
       <div className="mx-auto flex min-h-screen max-w-5xl flex-col justify-center px-6 py-12">
         <div className="rounded-[2rem] border border-slate-700 bg-slate-900/95 p-10 shadow-2xl shadow-slate-950/30">
           <div className="mb-8 flex flex-col gap-4 sm:flex-row sm:items-end sm:justify-between">
-            <div>
-              <p className="text-sm uppercase tracking-[0.35em] text-cyan-300">secondServe</p>
-              <h1 className="mt-3 text-4xl font-semibold text-white">{sectionTitle}</h1>
-              <p className="mt-3 max-w-2xl text-sm text-slate-400 sm:text-base">{registrationHint}</p>
+            <div className="flex items-center gap-4">
+              <img src="/icons.svg" alt="SecondServe icon" className="h-16 w-16 rounded-3xl bg-slate-900 p-3 shadow-xl shadow-slate-950/30" />
+              <div>
+                <p className="text-sm uppercase tracking-[0.35em] text-cyan-300">secondServe</p>
+                <h1 className="mt-3 text-4xl font-semibold text-white">{sectionTitle}</h1>
+                <p className="mt-3 max-w-2xl text-sm text-slate-400 sm:text-base">{registrationHint}</p>
+              </div>
             </div>
             <div className="flex gap-3 rounded-3xl bg-slate-950/80 p-4 text-sm text-slate-200 ring-1 ring-slate-700">
               <button

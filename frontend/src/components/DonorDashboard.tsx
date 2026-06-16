@@ -57,9 +57,12 @@ export function DonorDashboard() {
 
   return (
     <section className="mx-auto max-w-3xl rounded-3xl border border-slate-700 bg-slate-950/90 p-8 shadow-xl shadow-slate-950/40 ring-1 ring-slate-700">
-      <div className="mb-8">
-        <h2 className="text-3xl font-semibold text-white">Donor Dashboard</h2>
-        <p className="mt-2 text-slate-300">Post rescued food and let receivers claim it.</p>
+      <div className="mb-8 flex items-center gap-4">
+        <img src="/icons.svg" alt="SecondServe icon" className="h-14 w-14 rounded-3xl bg-slate-900 p-3 shadow-xl shadow-slate-950/30" />
+        <div>
+          <h2 className="text-3xl font-semibold text-white">Donor Dashboard</h2>
+          <p className="mt-2 text-slate-300">Post rescued food and let receivers claim it.</p>
+        </div>
       </div>
 
       <form className="space-y-6" onSubmit={handleSubmit}>

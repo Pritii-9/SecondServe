@@ -198,9 +198,12 @@ export function ReceiverMap() {
     <div className="space-y-6">
       <div className="rounded-3xl border border-slate-700 bg-slate-950/90 p-6 shadow-lg shadow-slate-950/20">
         <div className="flex flex-col gap-3 sm:flex-row sm:items-center sm:justify-between">
-          <div>
-            <h2 className="text-2xl font-semibold text-white">Nearby Rescue Listings</h2>
-            <p className="mt-2 text-sm text-slate-400">Markers update in real time when new AI-enhanced listings become available.</p>
+          <div className="flex items-center gap-4">
+            <img src="/icons.svg" alt="SecondServe icon" className="h-12 w-12 rounded-2xl bg-slate-900 p-2 shadow-lg shadow-slate-950/30" />
+            <div>
+              <h2 className="text-2xl font-semibold text-white">Nearby Rescue Listings</h2>
+              <p className="mt-2 text-sm text-slate-400">Markers update in real time when new AI-enhanced listings become available.</p>
+            </div>
           </div>
           <div className="rounded-3xl bg-slate-900/80 px-4 py-3 text-sm text-slate-200">
             {loading ? "Finding listings..." : `${listings.length} listings within ${radiusKm}km`}
