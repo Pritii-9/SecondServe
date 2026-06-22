@@ -40,6 +40,7 @@ export interface Listing {
   category: string;
   dietaryTags: string[];
   safetyAdvice: string;
+  pickupPin?: string;
   createdAt: string;
   updatedAt: string;
 }

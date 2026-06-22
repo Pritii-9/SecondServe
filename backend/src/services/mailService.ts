@@ -44,5 +44,11 @@ export async function sendVerificationEmail(toEmail: string, code: string) {
     `,
   };
 
-  await transporter.sendMail(mailOptions);
+  try {
+    const info = await transporter.sendMail(mailOptions);
+    console.log(`[backend] Successfully sent verification email to ${toEmail} (ID: ${info.messageId})`);
+  } catch (error) {
+    console.error(`[backend] Nodemailer failed to send email to ${toEmail}:`, error);
+    throw error;
+  }
 }

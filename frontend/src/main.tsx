@@ -5,12 +5,16 @@ import App from './App.tsx'
 import { AuthProvider } from './context/AuthContext'
 import { SocketProvider } from './context/SocketContext'
 
+import { ThemeProvider } from './context/ThemeContext'
+
 createRoot(document.getElementById('root')!).render(
   <StrictMode>
-    <AuthProvider>
-      <SocketProvider>
-        <App />
-      </SocketProvider>
-    </AuthProvider>
+    <ThemeProvider>
+      <AuthProvider>
+        <SocketProvider>
+          <App />
+        </SocketProvider>
+      </AuthProvider>
+    </ThemeProvider>
   </StrictMode>,
 )

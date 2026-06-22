@@ -68,6 +68,7 @@ export async function fetchPuneShops(query?: string) {
     method: "POST",
     headers: {
       "Content-Type": "application/x-www-form-urlencoded",
+      "User-Agent": "secondServe-App/1.0 (pvjadhav2513@gmail.com)",
     },
     body: `data=${encodeURIComponent(overpassQuery)}`,
   });

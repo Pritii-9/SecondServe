@@ -20,6 +20,7 @@ export interface ListingDocument extends Document {
   category: string;
   dietaryTags: string[];
   safetyAdvice: string;
+  pickupPin?: string;
   createdAt: Date;
   updatedAt: Date;
 }
@@ -50,6 +51,7 @@ const listingSchema = new mongoose.Schema<ListingDocument>(
     category: { type: String, required: true, default: "unknown" },
     dietaryTags: { type: [String], required: true, default: [] },
     safetyAdvice: { type: String, required: true, default: "No safety advice available." },
+    pickupPin: { type: String },
   },
   {
     timestamps: true,

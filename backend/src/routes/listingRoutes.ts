@@ -67,9 +67,11 @@ export function listingRouter(io: SocketIOServer) {
         return res.status(401).json({ message: "Unauthorized" });
       }
 
+      const pickupPin = Math.floor(1000 + Math.random() * 9000).toString();
+
       const listing = await ListingModel.findOneAndUpdate(
         { _id: new mongoose.Types.ObjectId(idParam), status: "available" } as any,
-        { status: "claimed", claimedBy: receiverId, claimedAt: new Date(), rescueStatus: "pending" },
+        { status: "claimed", claimedBy: receiverId, claimedAt: new Date(), rescueStatus: "pending", pickupPin },
         { new: true },
       ).lean();
 
@@ -127,6 +129,60 @@ export function listingRouter(io: SocketIOServer) {
 
       const listings = await ListingModel.find({ donorId }).sort({ createdAt: -1 }).lean();
       return res.json({ listings });
+    } catch (error) {
+      next(error);
+    }
+  });
+
+  router.get("/my-claims", requireAuth(["receiver"]), async (req: Request, res: Response, next: NextFunction) => {
+    try {
+      const receiverId = req.authUser?.id;
+      if (!receiverId) {
+        return res.status(401).json({ message: "Unauthorized" });
+      }
+
+      const listings = await ListingModel.find({ claimedBy: receiverId }).sort({ claimedAt: -1 }).lean();
+      return res.json({ listings });
+    } catch (error) {
+      next(error);
+    }
+  });
+
+  router.post("/:id/verify-pickup", requireAuth(["donor"]), async (req: Request, res: Response, next: NextFunction) => {
+    try {
+      const idParam = Array.isArray(req.params.id) ? req.params.id[0] : req.params.id;
+      if (!idParam) {
+        return res.status(400).json({ message: "Listing id is required." });
+      }
+
+      const donorId = req.authUser?.id;
+      if (!donorId) {
+        return res.status(401).json({ message: "Unauthorized" });
+      }
+
+      const { pin } = req.body as { pin: string };
+      if (!pin) {
+        return res.status(400).json({ message: "Pickup PIN is required." });
+      }
+
+      const listing = await ListingModel.findOne({ _id: new mongoose.Types.ObjectId(idParam), donorId } as any);
+      if (!listing) {
+        return res.status(404).json({ message: "Listing not found or you don't have permission." });
+      }
+
+      if (listing.status !== "claimed") {
+        return res.status(400).json({ message: "Listing is not claimed yet." });
+      }
+
+      if (listing.pickupPin !== pin) {
+        return res.status(400).json({ message: "Invalid Pickup PIN." });
+      }
+
+      listing.rescueStatus = "completed";
+      await listing.save();
+
+      io.emit("listing_updated", listing);
+      return res.json(listing);
     } catch (error) {
       next(error);
     }

@@ -183,32 +183,32 @@ export function AuthForm() {
   }, [mode, role]);
 
   return (
-    <div className="min-h-screen bg-slate-950 text-slate-100 flex items-center justify-center p-4">
-      <div className="w-full max-w-4xl rounded-[2rem] border border-slate-900 bg-slate-900/20 backdrop-blur-xl p-6 sm:p-10 shadow-2xl shadow-slate-950/50">
+    <div className="min-h-screen bg-slate-50 dark:bg-slate-950 text-slate-900 dark:text-slate-100 flex items-center justify-center p-4 transition-colors duration-300">
+      <div className="w-full max-w-4xl rounded-[2rem] border border-slate-200 dark:border-slate-900 bg-white/60 dark:bg-slate-900/20 backdrop-blur-xl p-6 sm:p-10 shadow-2xl shadow-slate-200/50 dark:shadow-slate-950/50 transition-colors duration-300">
         <div className="mb-8 flex flex-col gap-6 sm:flex-row sm:items-center sm:justify-between">
           <div className="flex items-center gap-4">
             <div className="relative">
               <div className="absolute -inset-1 rounded-3xl bg-gradient-to-r from-cyan-500 to-emerald-500 opacity-30 blur-sm"></div>
-              <img src="/icons.svg" alt="SecondServe icon" className="relative h-16 w-16 rounded-3xl bg-slate-950 p-3.5 shadow-xl border border-slate-800" />
+              <img src="/icons.svg" alt="SecondServe icon" className="relative h-16 w-16 rounded-3xl bg-white dark:bg-slate-950 p-3.5 shadow-xl border border-slate-200 dark:border-slate-800 transition-colors duration-300" />
             </div>
             <div>
-              <p className="text-xs font-semibold uppercase tracking-[0.4em] text-cyan-400">secondServe</p>
-              <h1 className="mt-1.5 text-3xl font-bold tracking-tight text-white">{sectionTitle}</h1>
-              <p className="mt-2 max-w-xl text-xs sm:text-sm text-slate-400 leading-relaxed">{registrationHint}</p>
+              <p className="text-xs font-semibold uppercase tracking-[0.4em] text-cyan-600 dark:text-cyan-400 transition-colors duration-300">secondServe</p>
+              <h1 className="mt-1.5 text-3xl font-bold tracking-tight text-slate-900 dark:text-white transition-colors duration-300">{sectionTitle}</h1>
+              <p className="mt-2 max-w-xl text-xs sm:text-sm text-slate-500 dark:text-slate-400 leading-relaxed transition-colors duration-300">{registrationHint}</p>
             </div>
           </div>
           {mode !== "verify" && (
-            <div className="flex shrink-0 gap-1 rounded-2xl bg-slate-950/80 p-1.5 ring-1 ring-slate-800 self-start sm:self-center">
+            <div className="flex shrink-0 gap-1 rounded-2xl bg-white/80 dark:bg-slate-950/80 p-1.5 ring-1 ring-slate-200 dark:ring-slate-800 self-start sm:self-center transition-colors duration-300">
               <button
                 type="button"
-                className={`rounded-xl px-4 py-2 text-xs font-bold tracking-wider uppercase transition-all duration-200 ${mode === "login" ? "bg-cyan-500 text-slate-950 shadow-lg shadow-cyan-500/20" : "text-slate-400 hover:text-slate-200"}`}
+                className={`rounded-xl px-4 py-2 text-xs font-bold tracking-wider uppercase transition-all duration-200 ${mode === "login" ? "bg-cyan-500 text-white dark:text-slate-950 shadow-lg shadow-cyan-500/20" : "text-slate-500 dark:text-slate-400 hover:text-slate-900 dark:hover:text-slate-200"}`}
                 onClick={() => toggleMode("login")}
               >
                 Login
               </button>
               <button
                 type="button"
-                className={`rounded-xl px-4 py-2 text-xs font-bold tracking-wider uppercase transition-all duration-200 ${mode === "register" ? "bg-cyan-500 text-slate-950 shadow-lg shadow-cyan-500/20" : "text-slate-400 hover:text-slate-200"}`}
+                className={`rounded-xl px-4 py-2 text-xs font-bold tracking-wider uppercase transition-all duration-200 ${mode === "register" ? "bg-cyan-500 text-white dark:text-slate-950 shadow-lg shadow-cyan-500/20" : "text-slate-500 dark:text-slate-400 hover:text-slate-900 dark:hover:text-slate-200"}`}
                 onClick={() => toggleMode("register")}
               >
                 Sign up
@@ -221,18 +221,18 @@ export function AuthForm() {
           <form className="space-y-6" onSubmit={handleSubmit}>
             {mode === "register" && (
               <div className="group">
-                <label className="block text-xs font-semibold uppercase tracking-wider text-slate-400 group-focus-within:text-cyan-400 transition-colors duration-200">Full name</label>
+                <label className="block text-xs font-semibold uppercase tracking-wider text-slate-500 dark:text-slate-400 group-focus-within:text-cyan-600 dark:group-focus-within:text-cyan-400 transition-colors duration-200">Full name</label>
                 <div className="relative mt-2">
-                  <User className="absolute left-4 top-1/2 -translate-y-1/2 h-5 w-5 text-slate-500 group-focus-within:text-cyan-400 transition-colors duration-200" />
+                  <User className="absolute left-4 top-1/2 -translate-y-1/2 h-5 w-5 text-slate-400 dark:text-slate-500 group-focus-within:text-cyan-600 dark:group-focus-within:text-cyan-400 transition-colors duration-200" />
                   <input
                     value={name}
                     onChange={(event) => setName(event.target.value)}
-                    className="w-full rounded-2xl border border-slate-800 bg-slate-950/60 pl-12 pr-4 py-3.5 text-sm text-slate-100 outline-none transition focus:border-cyan-500 focus:ring-4 focus:ring-cyan-500/10 placeholder:text-slate-650"
+                    className="w-full rounded-2xl border border-slate-200 dark:border-slate-800 bg-slate-50/60 dark:bg-slate-950/60 pl-12 pr-4 py-3.5 text-sm text-slate-900 dark:text-slate-100 outline-none transition-colors duration-300 focus:border-cyan-500 focus:ring-4 focus:ring-cyan-500/10 placeholder:text-slate-400 dark:placeholder:text-slate-500"
                     placeholder="Enter your name"
                   />
                 </div>
                 {errors.name && (
-                  <div className="mt-2 flex items-center gap-1.5 text-xs text-rose-400">
+                  <div className="mt-2 flex items-center gap-1.5 text-xs text-rose-500 dark:text-rose-400">
                     <AlertCircle className="h-4 w-4" />
                     <span>{errors.name}</span>
                   </div>
@@ -242,19 +242,19 @@ export function AuthForm() {
 
             <div className="grid gap-6 sm:grid-cols-2">
               <div className="group">
-                <label className="block text-xs font-semibold uppercase tracking-wider text-slate-400 group-focus-within:text-cyan-400 transition-colors duration-200">Email address</label>
+                <label className="block text-xs font-semibold uppercase tracking-wider text-slate-500 dark:text-slate-400 group-focus-within:text-cyan-600 dark:group-focus-within:text-cyan-400 transition-colors duration-200">Email address</label>
                 <div className="relative mt-2">
-                  <Mail className="absolute left-4 top-1/2 -translate-y-1/2 h-5 w-5 text-slate-500 group-focus-within:text-cyan-400 transition-colors duration-200" />
+                  <Mail className="absolute left-4 top-1/2 -translate-y-1/2 h-5 w-5 text-slate-400 dark:text-slate-500 group-focus-within:text-cyan-600 dark:group-focus-within:text-cyan-400 transition-colors duration-200" />
                   <input
                     type="email"
                     value={email}
                     onChange={(event) => setEmail(event.target.value)}
-                    className="w-full rounded-2xl border border-slate-800 bg-slate-950/60 pl-12 pr-4 py-3.5 text-sm text-slate-100 outline-none transition focus:border-cyan-500 focus:ring-4 focus:ring-cyan-500/10 placeholder:text-slate-650"
+                    className="w-full rounded-2xl border border-slate-200 dark:border-slate-800 bg-slate-50/60 dark:bg-slate-950/60 pl-12 pr-4 py-3.5 text-sm text-slate-900 dark:text-slate-100 outline-none transition-colors duration-300 focus:border-cyan-500 focus:ring-4 focus:ring-cyan-500/10 placeholder:text-slate-400 dark:placeholder:text-slate-500"
                     placeholder="you@example.com"
                   />
                 </div>
                 {errors.email && (
-                  <div className="mt-2 flex items-center gap-1.5 text-xs text-rose-400">
+                  <div className="mt-2 flex items-center gap-1.5 text-xs text-rose-500 dark:text-rose-400">
                     <AlertCircle className="h-4 w-4" />
                     <span>{errors.email}</span>
                   </div>
@@ -262,26 +262,26 @@ export function AuthForm() {
               </div>
 
               <div className="group">
-                <label className="block text-xs font-semibold uppercase tracking-wider text-slate-400 group-focus-within:text-cyan-400 transition-colors duration-200">Password</label>
+                <label className="block text-xs font-semibold uppercase tracking-wider text-slate-500 dark:text-slate-400 group-focus-within:text-cyan-600 dark:group-focus-within:text-cyan-400 transition-colors duration-200">Password</label>
                 <div className="relative mt-2">
-                  <Lock className="absolute left-4 top-1/2 -translate-y-1/2 h-5 w-5 text-slate-500 group-focus-within:text-cyan-400 transition-colors duration-200" />
+                  <Lock className="absolute left-4 top-1/2 -translate-y-1/2 h-5 w-5 text-slate-400 dark:text-slate-500 group-focus-within:text-cyan-600 dark:group-focus-within:text-cyan-400 transition-colors duration-200" />
                   <input
                     type={showPassword ? "text" : "password"}
                     value={password}
                     onChange={(event) => setPassword(event.target.value)}
-                    className="w-full rounded-2xl border border-slate-800 bg-slate-950/60 pl-12 pr-12 py-3.5 text-sm text-slate-100 outline-none transition focus:border-cyan-500 focus:ring-4 focus:ring-cyan-500/10 placeholder:text-slate-650"
+                    className="w-full rounded-2xl border border-slate-200 dark:border-slate-800 bg-slate-50/60 dark:bg-slate-950/60 pl-12 pr-12 py-3.5 text-sm text-slate-900 dark:text-slate-100 outline-none transition-colors duration-300 focus:border-cyan-500 focus:ring-4 focus:ring-cyan-500/10 placeholder:text-slate-400 dark:placeholder:text-slate-500"
                     placeholder="Enter a secure password"
                   />
                   <button
                     type="button"
                     onClick={() => setShowPassword(!showPassword)}
-                    className="absolute right-4 top-1/2 -translate-y-1/2 text-slate-500 hover:text-cyan-400 transition-colors duration-200"
+                    className="absolute right-4 top-1/2 -translate-y-1/2 text-slate-400 dark:text-slate-500 hover:text-cyan-600 dark:hover:text-cyan-400 transition-colors duration-200"
                   >
                     {showPassword ? <EyeOff className="h-5 w-5" /> : <Eye className="h-5 w-5" />}
                   </button>
                 </div>
                 {errors.password && (
-                  <div className="mt-2 flex items-center gap-1.5 text-xs text-rose-400">
+                  <div className="mt-2 flex items-center gap-1.5 text-xs text-rose-500 dark:text-rose-400">
                     <AlertCircle className="h-4 w-4" />
                     <span>{errors.password}</span>
                   </div>
@@ -290,33 +290,33 @@ export function AuthForm() {
             </div>
 
             {mode === "register" && (
-              <div className="space-y-6 rounded-3xl border border-slate-800 bg-slate-950/40 p-5 sm:p-6">
+              <div className="space-y-6 rounded-3xl border border-slate-200 dark:border-slate-800 bg-white/40 dark:bg-slate-950/40 p-5 sm:p-6 transition-colors duration-300">
                 <div>
-                  <p className="text-xs font-bold uppercase tracking-wider text-cyan-400">Account role</p>
+                  <p className="text-xs font-bold uppercase tracking-wider text-cyan-600 dark:text-cyan-400">Account role</p>
                   <div className="mt-3.5 grid gap-4 sm:grid-cols-2">
                     {roles.map((option) => {
                       const RoleIcon = option.icon;
                       const isSelected = role === option.value;
                       return (
-                        <button
+                         <button
                           key={option.value}
                           type="button"
                           onClick={() => setRole(option.value)}
                           className={`group/role rounded-2xl border p-4 text-left transition-all duration-200 ${
                             isSelected
-                              ? "border-cyan-500/80 bg-cyan-500/5 shadow-lg shadow-cyan-500/5"
-                              : "border-slate-800 bg-slate-900/30 hover:border-slate-700"
+                              ? "border-cyan-500/80 bg-cyan-50 dark:bg-cyan-500/5 shadow-lg shadow-cyan-500/5"
+                              : "border-slate-200 dark:border-slate-800 bg-slate-50/50 dark:bg-slate-900/30 hover:border-cyan-500/30 dark:hover:border-slate-700"
                           }`}
                         >
                           <div className="flex items-center gap-3">
                             <div className={`rounded-xl p-2.5 transition-colors duration-200 ${
-                              isSelected ? "bg-cyan-500 text-slate-950" : "bg-slate-950 border border-slate-800 text-slate-400 group-hover/role:text-slate-200"
+                              isSelected ? "bg-cyan-500 text-white dark:text-slate-950" : "bg-white dark:bg-slate-950 border border-slate-200 dark:border-slate-800 text-slate-500 dark:text-slate-400 group-hover/role:text-cyan-600 dark:group-hover/role:text-slate-200"
                             }`}>
                               <RoleIcon className="h-5 w-5" />
                             </div>
                             <div>
-                              <p className="text-sm font-semibold text-white">{option.label}</p>
-                              <p className="mt-1 text-xs text-slate-400 leading-normal">{option.description}</p>
+                              <p className="text-sm font-semibold text-slate-900 dark:text-white transition-colors duration-300">{option.label}</p>
+                              <p className="mt-1 text-xs text-slate-500 dark:text-slate-400 leading-normal transition-colors duration-300">{option.description}</p>
                             </div>
                           </div>
                         </button>
@@ -325,53 +325,53 @@ export function AuthForm() {
                   </div>
                 </div>
 
-                <div className="border-t border-slate-800/80 pt-5">
+                <div className="border-t border-slate-200 dark:border-slate-800/80 pt-5 transition-colors duration-300">
                   <div className="flex flex-col gap-2 sm:flex-row sm:items-center sm:justify-between">
-                    <p className="text-xs font-bold uppercase tracking-wider text-cyan-400">Primary location coordinates</p>
+                    <p className="text-xs font-bold uppercase tracking-wider text-cyan-600 dark:text-cyan-400 transition-colors duration-300">Primary location coordinates</p>
                     <button
                       type="button"
                       onClick={getLocation}
                       disabled={locating}
-                      className="inline-flex items-center gap-2 rounded-xl bg-slate-900 hover:bg-slate-800 border border-slate-800 px-3.5 py-1.5 text-xs font-semibold text-slate-200 transition-colors duration-200 disabled:opacity-50"
+                      className="inline-flex items-center gap-2 rounded-xl bg-slate-50 dark:bg-slate-900 hover:bg-slate-100 dark:hover:bg-slate-800 border border-slate-200 dark:border-slate-800 px-3.5 py-1.5 text-xs font-semibold text-slate-700 dark:text-slate-200 transition-colors duration-200 disabled:opacity-50"
                     >
-                      {locating ? <Loader2 className="h-3.5 w-3.5 animate-spin text-cyan-400" /> : <Navigation className="h-3.5 w-3.5 text-cyan-400 animate-pulse" />}
+                      {locating ? <Loader2 className="h-3.5 w-3.5 animate-spin text-cyan-500 dark:text-cyan-400" /> : <Navigation className="h-3.5 w-3.5 text-cyan-600 dark:text-cyan-400 animate-pulse" />}
                       <span>{locating ? "Locating..." : "Use current location"}</span>
                     </button>
                   </div>
                   <div className="mt-3.5 grid gap-4 sm:grid-cols-2">
                     <div className="group/lat">
-                      <label className="block text-xs text-slate-400 group-focus-within/lat:text-cyan-400 transition-colors duration-200">Latitude</label>
+                      <label className="block text-xs text-slate-500 dark:text-slate-400 group-focus-within/lat:text-cyan-600 dark:group-focus-within/lat:text-cyan-400 transition-colors duration-200">Latitude</label>
                       <div className="relative mt-2">
-                        <MapPin className="absolute left-4 top-1/2 -translate-y-1/2 h-4 w-4 text-slate-600 group-focus-within/lat:text-cyan-400 transition-colors duration-200" />
+                        <MapPin className="absolute left-4 top-1/2 -translate-y-1/2 h-4 w-4 text-slate-400 dark:text-slate-600 group-focus-within/lat:text-cyan-600 dark:group-focus-within/lat:text-cyan-400 transition-colors duration-200" />
                         <input
                           type="text"
                           value={latitude}
                           onChange={(event) => setLatitude(event.target.value)}
-                          className="w-full rounded-xl border border-slate-800 bg-slate-950/60 pl-10 pr-4 py-2.5 text-xs text-slate-100 outline-none transition focus:border-cyan-500 focus:ring-4 focus:ring-cyan-500/10 placeholder:text-slate-700"
+                          className="w-full rounded-xl border border-slate-200 dark:border-slate-800 bg-slate-50/60 dark:bg-slate-950/60 pl-10 pr-4 py-2.5 text-xs text-slate-900 dark:text-slate-100 outline-none transition-colors duration-300 focus:border-cyan-500 focus:ring-4 focus:ring-cyan-500/10 placeholder:text-slate-400 dark:placeholder:text-slate-700"
                           placeholder="e.g. 18.5204"
                         />
                       </div>
                       {errors.latitude && (
-                        <div className="mt-1.5 flex items-center gap-1 text-xs text-rose-400">
+                        <div className="mt-1.5 flex items-center gap-1 text-xs text-rose-500 dark:text-rose-400">
                           <AlertCircle className="h-3.5 w-3.5" />
                           <span>{errors.latitude}</span>
                         </div>
                       )}
                     </div>
                     <div className="group/lng">
-                      <label className="block text-xs text-slate-400 group-focus-within/lng:text-cyan-400 transition-colors duration-200">Longitude</label>
+                      <label className="block text-xs text-slate-500 dark:text-slate-400 group-focus-within/lng:text-cyan-600 dark:group-focus-within/lng:text-cyan-400 transition-colors duration-200">Longitude</label>
                       <div className="relative mt-2">
-                        <MapPin className="absolute left-4 top-1/2 -translate-y-1/2 h-4 w-4 text-slate-600 group-focus-within/lng:text-cyan-400 transition-colors duration-200" />
+                        <MapPin className="absolute left-4 top-1/2 -translate-y-1/2 h-4 w-4 text-slate-400 dark:text-slate-600 group-focus-within/lng:text-cyan-600 dark:group-focus-within/lng:text-cyan-400 transition-colors duration-200" />
                         <input
                           type="text"
                           value={longitude}
                           onChange={(event) => setLongitude(event.target.value)}
-                          className="w-full rounded-xl border border-slate-800 bg-slate-950/60 pl-10 pr-4 py-2.5 text-xs text-slate-100 outline-none transition focus:border-cyan-500 focus:ring-4 focus:ring-cyan-500/10 placeholder:text-slate-700"
+                          className="w-full rounded-xl border border-slate-200 dark:border-slate-800 bg-slate-50/60 dark:bg-slate-950/60 pl-10 pr-4 py-2.5 text-xs text-slate-900 dark:text-slate-100 outline-none transition-colors duration-300 focus:border-cyan-500 focus:ring-4 focus:ring-cyan-500/10 placeholder:text-slate-400 dark:placeholder:text-slate-700"
                           placeholder="e.g. 73.8567"
                         />
                       </div>
                       {errors.longitude && (
-                        <div className="mt-1.5 flex items-center gap-1 text-xs text-rose-400">
+                        <div className="mt-1.5 flex items-center gap-1 text-xs text-rose-500 dark:text-rose-400">
                           <AlertCircle className="h-3.5 w-3.5" />
                           <span>{errors.longitude}</span>
                         </div>
@@ -385,7 +385,7 @@ export function AuthForm() {
             <button
               type="submit"
               disabled={loading}
-              className="relative overflow-hidden group/btn w-full items-center justify-center rounded-2xl bg-gradient-to-r from-cyan-500 to-cyan-400 px-6 py-4 text-sm font-bold tracking-wider uppercase text-slate-950 transition hover:from-cyan-400 hover:to-cyan-300 disabled:cursor-not-allowed disabled:opacity-50 shadow-lg shadow-cyan-500/10 flex gap-2"
+              className="relative overflow-hidden group/btn w-full items-center justify-center rounded-2xl bg-gradient-to-r from-cyan-600 to-cyan-500 dark:from-cyan-500 dark:to-cyan-400 px-6 py-4 text-sm font-bold tracking-wider uppercase text-white dark:text-slate-950 transition hover:from-cyan-500 hover:to-cyan-400 dark:hover:from-cyan-400 dark:hover:to-cyan-300 disabled:cursor-not-allowed disabled:opacity-50 shadow-lg shadow-cyan-500/20 dark:shadow-cyan-500/10 flex gap-2"
             >
               {loading ? (
                 <>
@@ -400,25 +400,25 @@ export function AuthForm() {
         ) : (
           <form className="space-y-6" onSubmit={handleVerifySubmit}>
             <div className="group">
-              <label className="block text-xs font-semibold uppercase tracking-wider text-slate-400 group-focus-within:text-cyan-400 transition-colors duration-200">
+              <label className="block text-xs font-semibold uppercase tracking-wider text-slate-500 dark:text-slate-400 group-focus-within:text-cyan-600 dark:group-focus-within:text-cyan-400 transition-colors duration-200">
                 Verification Code
               </label>
-              <p className="mt-2 text-xs text-slate-400">
-                We sent a 6-digit security code to <span className="font-semibold text-white">{verifyEmail}</span>. Enter it below to verify your account.
+              <p className="mt-2 text-xs text-slate-500 dark:text-slate-400">
+                We sent a 6-digit security code to <span className="font-semibold text-slate-900 dark:text-white">{verifyEmail}</span>. Enter it below to verify your account.
               </p>
               <div className="relative mt-4">
-                <Lock className="absolute left-4 top-1/2 -translate-y-1/2 h-5 w-5 text-slate-500 group-focus-within:text-cyan-400 transition-colors duration-200" />
+                <Lock className="absolute left-4 top-1/2 -translate-y-1/2 h-5 w-5 text-slate-400 dark:text-slate-500 group-focus-within:text-cyan-600 dark:group-focus-within:text-cyan-400 transition-colors duration-200" />
                 <input
                   type="text"
                   maxLength={6}
                   value={verificationCode}
                   onChange={(event) => setVerificationCode(event.target.value.replace(/\D/g, ""))}
-                  className="w-full rounded-2xl border border-slate-800 bg-slate-950/60 pl-12 pr-4 py-3.5 text-center text-lg font-bold tracking-[0.5em] text-cyan-450 outline-none transition focus:border-cyan-500 focus:ring-4 focus:ring-cyan-500/10 placeholder:text-slate-700 placeholder:tracking-normal"
+                  className="w-full rounded-2xl border border-slate-200 dark:border-slate-800 bg-slate-50/60 dark:bg-slate-950/60 pl-12 pr-4 py-3.5 text-center text-lg font-bold tracking-[0.5em] text-cyan-600 dark:text-cyan-400 outline-none transition-colors duration-300 focus:border-cyan-500 focus:ring-4 focus:ring-cyan-500/10 placeholder:text-slate-400 dark:placeholder:text-slate-700 placeholder:tracking-normal"
                   placeholder="123456"
                 />
               </div>
               {errors.verificationCode && (
-                <div className="mt-2 flex items-center gap-1.5 text-xs text-rose-400">
+               <div className="mt-2 flex items-center gap-1.5 text-xs text-rose-500 dark:text-rose-400">
                   <AlertCircle className="h-4 w-4" />
                   <span>{errors.verificationCode}</span>
                 </div>
@@ -428,7 +428,7 @@ export function AuthForm() {
             <button
               type="submit"
               disabled={loading}
-              className="relative overflow-hidden group/btn w-full items-center justify-center rounded-2xl bg-gradient-to-r from-cyan-500 to-cyan-400 px-6 py-4 text-sm font-bold tracking-wider uppercase text-slate-950 transition hover:from-cyan-400 hover:to-cyan-300 disabled:cursor-not-allowed disabled:opacity-50 shadow-lg shadow-cyan-500/10 flex gap-2"
+              className="relative overflow-hidden group/btn w-full items-center justify-center rounded-2xl bg-gradient-to-r from-cyan-600 to-cyan-500 dark:from-cyan-500 dark:to-cyan-400 px-6 py-4 text-sm font-bold tracking-wider uppercase text-white dark:text-slate-950 transition hover:from-cyan-500 hover:to-cyan-400 dark:hover:from-cyan-400 dark:hover:to-cyan-300 disabled:cursor-not-allowed disabled:opacity-50 shadow-lg shadow-cyan-500/20 dark:shadow-cyan-500/10 flex gap-2"
             >
               {loading ? (
                 <>
@@ -444,7 +444,7 @@ export function AuthForm() {
               <button
                 type="button"
                 onClick={() => setMode("login")}
-                className="text-xs font-semibold text-slate-400 hover:text-slate-200 transition-colors duration-200"
+                className="text-xs font-semibold text-slate-500 dark:text-slate-400 hover:text-slate-900 dark:hover:text-slate-200 transition-colors duration-200"
               >
                 Back to Login
               </button>
@@ -452,7 +452,7 @@ export function AuthForm() {
                 type="button"
                 disabled={cooldown > 0}
                 onClick={handleResendCode}
-                className="text-xs font-semibold text-cyan-400 hover:text-cyan-350 transition-colors duration-200 disabled:opacity-50 disabled:cursor-not-allowed"
+                className="text-xs font-semibold text-cyan-600 dark:text-cyan-400 hover:text-cyan-500 dark:hover:text-cyan-300 transition-colors duration-200 disabled:opacity-50 disabled:cursor-not-allowed"
               >
                 {cooldown > 0 ? `Resend code in ${cooldown}s` : "Resend verification code"}
               </button>
@@ -463,10 +463,10 @@ export function AuthForm() {
         {message && (
           <div className={`mt-6 flex items-start gap-3 rounded-2xl p-4 text-sm border transition-all duration-300 ${
             message.toLowerCase().includes("failed") || message.toLowerCase().includes("unable") || message.toLowerCase().includes("not") || message.toLowerCase().includes("invalid") || message.toLowerCase().includes("expired")
-              ? "bg-rose-500/10 border-rose-500/20 text-rose-350"
+              ? "bg-rose-50 dark:bg-rose-500/10 border-rose-200 dark:border-rose-500/20 text-rose-600 dark:text-rose-400"
               : message.toLowerCase().includes("fetching")
-              ? "bg-cyan-500/10 border-cyan-500/20 text-cyan-300 animate-pulse"
-              : "bg-emerald-500/10 border-emerald-500/20 text-emerald-355"
+              ? "bg-cyan-50 dark:bg-cyan-500/10 border-cyan-200 dark:border-cyan-500/20 text-cyan-600 dark:text-cyan-400 animate-pulse"
+              : "bg-emerald-50 dark:bg-emerald-500/10 border-emerald-200 dark:border-emerald-500/20 text-emerald-600 dark:text-emerald-400"
           }`}>
             {message.toLowerCase().includes("failed") || message.toLowerCase().includes("unable") || message.toLowerCase().includes("not") || message.toLowerCase().includes("invalid") || message.toLowerCase().includes("expired") ? (
               <AlertCircle className="h-5 w-5 shrink-0" />
