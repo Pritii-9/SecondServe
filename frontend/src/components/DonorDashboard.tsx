@@ -2,6 +2,7 @@ import { useState, useEffect } from "react";
 import type { Listing } from "../types/index";
 import { api } from "../utils/api";
 import { ListingCard } from "./ListingCard";
+import { ImpactStats } from "./ImpactStats";
 import { useSocket } from "../context/SocketContext";
 import {
   Loader2,
@@ -131,6 +132,8 @@ export function DonorDashboard() {
 
   return (
     <div className="space-y-10">
+      <ImpactStats />
+      
       <section className="rounded-3xl border border-slate-200 dark:border-slate-900 bg-white/60 dark:bg-slate-900/20 backdrop-blur-xl p-6 sm:p-8 shadow-xl shadow-slate-200/40 dark:shadow-slate-950/40 transition-colors duration-300">
         <div className="mb-8 flex items-center gap-4">
           <div className="relative">

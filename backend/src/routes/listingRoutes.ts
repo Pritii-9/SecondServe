@@ -4,6 +4,7 @@ import { Router, type Request, type Response, type NextFunction } from "express"
 import { Server as SocketIOServer } from "socket.io";
 import { ListingModel } from "../models/Listing.js";
 import { analyzeListing } from "../services/groqService.js";
+import { sendClaimNotificationEmail, sendPickupVerifiedEmail } from "../services/mailService.js";
 import { requireAuth } from "../middleware/auth.js";
 
 dotenv.config();
@@ -72,11 +73,21 @@ export function listingRouter(io: SocketIOServer) {
       const listing = await ListingModel.findOneAndUpdate(
         { _id: new mongoose.Types.ObjectId(idParam), status: "available" } as any,
         { status: "claimed", claimedBy: receiverId, claimedAt: new Date(), rescueStatus: "pending", pickupPin },
-        { new: true },
-      ).lean();
+        { returnDocument: "after" },
+      ).populate("donorId", "name email").lean();
 
       if (!listing) {
         return res.status(404).json({ message: "Listing not found or already claimed." });
+      }
+
+      if (listing.donorId && typeof listing.donorId === "object" && 'email' in listing.donorId) {
+         sendClaimNotificationEmail(
+           listing.donorId.email as string, 
+           listing.donorId.name as string, 
+           req.authUser!.name || "A Receiver", 
+           listing.description, 
+           listing.quantity
+         );
       }
 
       io.emit("listing_updated", listing);
@@ -106,7 +117,7 @@ export function listingRouter(io: SocketIOServer) {
       const listing = await ListingModel.findOneAndUpdate(
         { _id: new mongoose.Types.ObjectId(idParam), claimedBy: receiverId } as any,
         { rescueStatus: status },
-        { new: true },
+        { returnDocument: "after" },
       ).lean();
 
       if (!listing) {
@@ -127,7 +138,7 @@ export function listingRouter(io: SocketIOServer) {
         return res.status(401).json({ message: "Unauthorized" });
       }
 
-      const listings = await ListingModel.find({ donorId }).sort({ createdAt: -1 }).lean();
+      const listings = await ListingModel.find({ donorId }).populate("claimedBy", "name email").sort({ createdAt: -1 }).lean();
       return res.json({ listings });
     } catch (error) {
       next(error);
@@ -141,7 +152,7 @@ export function listingRouter(io: SocketIOServer) {
         return res.status(401).json({ message: "Unauthorized" });
       }
 
-      const listings = await ListingModel.find({ claimedBy: receiverId }).sort({ claimedAt: -1 }).lean();
+      const listings = await ListingModel.find({ claimedBy: receiverId }).populate("donorId", "name email").sort({ claimedAt: -1 }).lean();
       return res.json({ listings });
     } catch (error) {
       next(error);
@@ -180,6 +191,16 @@ export function listingRouter(io: SocketIOServer) {
 
       listing.rescueStatus = "completed";
       await listing.save();
+      await listing.populate("claimedBy", "name email");
+
+      if (listing.claimedBy && typeof listing.claimedBy === "object" && 'email' in listing.claimedBy) {
+         sendPickupVerifiedEmail(
+           (listing.claimedBy as any).email, 
+           (listing.claimedBy as any).name, 
+           req.authUser!.name || "The Donor", 
+           listing.description
+         );
+      }
 
       io.emit("listing_updated", listing);
       return res.json(listing);
@@ -241,7 +262,36 @@ export function listingRouter(io: SocketIOServer) {
         },
       ]);
 
+      await ListingModel.populate(listings, { path: "donorId", select: "name email" });
+
       return res.json({ listings });
+    } catch (error) {
+      next(error);
+    }
+  });
+
+  router.get("/stats", requireAuth(["donor", "receiver"]), async (req: Request, res: Response, next: NextFunction) => {
+    try {
+      const userId = req.authUser?.id;
+      const role = req.authUser?.role;
+
+      if (!userId || !role) {
+        return res.status(401).json({ message: "Unauthorized" });
+      }
+
+      const matchQuery = role === "donor" 
+        ? { donorId: new mongoose.Types.ObjectId(userId), rescueStatus: "completed" } 
+        : { claimedBy: new mongoose.Types.ObjectId(userId), rescueStatus: "completed" };
+
+      const result = await ListingModel.aggregate([
+        { $match: matchQuery },
+        { $group: { _id: null, totalMeals: { $sum: "$quantity" } } }
+      ]);
+
+      const totalMeals = result.length > 0 ? result[0].totalMeals : 0;
+      const co2SavedKg = totalMeals * 2.5;
+
+      return res.json({ totalMeals, co2SavedKg });
     } catch (error) {
       next(error);
     }

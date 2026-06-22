@@ -8,6 +8,7 @@ import { useTheme } from "./context/ThemeContext";
 import { LogOut, User as UserIcon, HeartHandshake, Compass, Settings, Moon, Sun } from "lucide-react";
 import { ProfileModal } from "./components/ProfileModal";
 import { LogoutModal } from "./components/LogoutModal";
+import { NotificationBell } from "./components/NotificationBell";
 
 const App = () => {
   const { user, logout } = useAuth();
@@ -64,6 +65,7 @@ const App = () => {
             >
               {theme === "dark" ? <Sun className="h-4 w-4" /> : <Moon className="h-4 w-4" />}
             </button>
+            <NotificationBell />
             <button
               onClick={() => setIsProfileOpen(true)}
               className="inline-flex items-center justify-center h-9 w-9 rounded-xl bg-white dark:bg-slate-900 border border-slate-200 dark:border-slate-800 text-slate-500 dark:text-slate-400 hover:text-cyan-600 dark:hover:text-cyan-400 hover:border-cyan-500/20 hover:bg-cyan-500/5 transition-all duration-200"

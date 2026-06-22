@@ -46,8 +46,12 @@ export function requireAuth(roles?: UserRole[]) {
         return res.status(401).json({ message: "Unauthorized" });
       }
 
-      if (roles && !roles.includes(payload.role)) {
-        return res.status(403).json({ message: "Forbidden" });
+      if (roles) {
+        const normalizedRoles = roles.map(r => r.toLowerCase().trim());
+        const userRole = payload.role.toLowerCase().trim();
+        if (!normalizedRoles.includes(userRole)) {
+          return res.status(403).json({ message: "Forbidden" });
+        }
       }
 
       req.authUser = {

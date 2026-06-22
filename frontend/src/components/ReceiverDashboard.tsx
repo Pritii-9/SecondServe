@@ -2,6 +2,7 @@ import { useState, useEffect } from "react";
 import type { Listing } from "../types/index";
 import { api } from "../utils/api";
 import { ListingCard } from "./ListingCard";
+import { ImpactStats } from "./ImpactStats";
 import { useSocket } from "../context/SocketContext";
 import {
   Package,
@@ -51,6 +52,8 @@ export function ReceiverDashboard() {
 
   return (
     <div className="space-y-6">
+      <ImpactStats />
+      
       <div className="rounded-3xl border border-slate-200 dark:border-slate-900 bg-white/60 dark:bg-slate-900/20 backdrop-blur-xl p-6 sm:p-8 shadow-xl shadow-slate-200/40 dark:shadow-slate-950/40 transition-colors duration-300">
         <div className="mb-6 flex flex-col gap-4 sm:flex-row sm:items-center sm:justify-between">
           <div className="flex items-center gap-4">

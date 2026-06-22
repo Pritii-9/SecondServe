@@ -153,6 +153,24 @@ export function ListingCard({
           </button>
         )}
 
+        {/* Receiver's view of Donor Details */}
+        {isReceiverView && listing.status === "claimed" && listing.donorId && typeof listing.donorId === "object" && (
+          <div className="rounded-2xl border border-indigo-200 dark:border-indigo-500/20 bg-indigo-50 dark:bg-indigo-500/10 p-3.5 mt-2 transition-colors duration-300">
+             <p className="text-[10px] font-bold uppercase tracking-wider text-indigo-600 dark:text-indigo-400 mb-1 transition-colors duration-300">Pickup Location Details</p>
+             <p className="text-sm font-bold text-slate-900 dark:text-white transition-colors duration-300">{listing.donorId.name}</p>
+             <p className="text-xs text-slate-600 dark:text-slate-400 mt-0.5 transition-colors duration-300">{listing.donorId.email}</p>
+          </div>
+        )}
+
+        {/* Donor's view of Receiver Details */}
+        {isDonorView && listing.status === "claimed" && listing.claimedBy && typeof listing.claimedBy === "object" && (
+          <div className="rounded-2xl border border-violet-200 dark:border-violet-500/20 bg-violet-50 dark:bg-violet-500/10 p-3.5 mt-2 transition-colors duration-300">
+             <p className="text-[10px] font-bold uppercase tracking-wider text-violet-600 dark:text-violet-400 mb-1 transition-colors duration-300">Reserved For</p>
+             <p className="text-sm font-bold text-slate-900 dark:text-white transition-colors duration-300">{listing.claimedBy.name}</p>
+             <p className="text-xs text-slate-600 dark:text-slate-400 mt-0.5 transition-colors duration-300">{listing.claimedBy.email}</p>
+          </div>
+        )}
+
         {/* Receiver's PIN display */}
         {isReceiverView && listing.status === "claimed" && listing.pickupPin && listing.rescueStatus !== "completed" && (
           <div className="rounded-2xl border border-cyan-200 dark:border-cyan-500/20 bg-cyan-50 dark:bg-cyan-500/10 p-3.5 text-center mt-2 transition-colors duration-300">

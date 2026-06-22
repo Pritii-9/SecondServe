@@ -6,14 +6,17 @@ import { AuthProvider } from './context/AuthContext'
 import { SocketProvider } from './context/SocketContext'
 
 import { ThemeProvider } from './context/ThemeContext'
+import { NotificationProvider } from './context/NotificationContext'
 
 createRoot(document.getElementById('root')!).render(
   <StrictMode>
     <ThemeProvider>
       <AuthProvider>
-        <SocketProvider>
-          <App />
-        </SocketProvider>
+        <NotificationProvider>
+          <SocketProvider>
+            <App />
+          </SocketProvider>
+        </NotificationProvider>
       </AuthProvider>
     </ThemeProvider>
   </StrictMode>,

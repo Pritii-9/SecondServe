@@ -22,7 +22,7 @@ export interface Place {
 
 export interface Listing {
   _id: string;
-  donorId: string;
+  donorId: string | { _id: string; name: string; email: string };
   description: string;
   quantity: number;
   expiryTime: string;
@@ -31,7 +31,7 @@ export interface Listing {
     coordinates: [number, number];
   };
   status: "available" | "claimed";
-  claimedBy?: string;
+  claimedBy?: string | { _id: string; name: string; email: string };
   claimedAt?: string;
   rescueStatus?: "pending" | "en_route" | "completed" | "cancelled";
   sourceType: "restaurant" | "shop" | "community";
@@ -48,4 +48,9 @@ export interface Listing {
 export interface AuthResponse {
   token: string;
   user: User;
+}
+
+export interface ImpactStats {
+  totalMeals: number;
+  co2SavedKg: number;
 }
