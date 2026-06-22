@@ -6,7 +6,7 @@ interface AuthContextState {
   user: User | null;
   token: string | null;
   loading: boolean;
-  login: (email: string, password: string) => Promise<void>;
+  login: (email: string, password: string) => Promise<{ requiresVerification: boolean; email?: string }>;
   register: (
     name: string,
     email: string,
@@ -16,7 +16,8 @@ interface AuthContextState {
       type: "Point";
       coordinates: [number, number];
     },
-  ) => Promise<void>;
+  ) => Promise<{ requiresVerification: boolean; email?: string }>;
+  verifyCode: (email: string, code: string) => Promise<void>;
   logout: () => void;
   setUser: (user: User | null) => void;
 }
@@ -59,9 +60,13 @@ export function AuthProvider({ children }: AuthProviderProps) {
   const login = async (email: string, password: string) => {
     setLoading(true);
     try {
-      const response = await api.post<AuthResponse>("/api/auth/login", { email, password });
+      const response = await api.post<AuthResponse & { requiresVerification?: boolean }>("/api/auth/login", { email, password });
+      if (response.data.requiresVerification) {
+        return { requiresVerification: true, email };
+      }
       setToken(response.data.token);
       setUser(response.data.user);
+      return { requiresVerification: false };
     } finally {
       setLoading(false);
     }
@@ -76,13 +81,28 @@ export function AuthProvider({ children }: AuthProviderProps) {
   ) => {
     setLoading(true);
     try {
-      const response = await api.post<AuthResponse>("/api/auth/register", {
+      const response = await api.post<AuthResponse & { requiresVerification?: boolean }>("/api/auth/register", {
         name,
         email,
         password,
         role,
         location,
       });
+      if (response.data.requiresVerification) {
+        return { requiresVerification: true, email };
+      }
+      setToken(response.data.token);
+      setUser(response.data.user);
+      return { requiresVerification: false };
+    } finally {
+      setLoading(false);
+    }
+  };
+
+  const verifyCode = async (email: string, code: string) => {
+    setLoading(true);
+    try {
+      const response = await api.post<AuthResponse>("/api/auth/verify", { email, code });
       setToken(response.data.token);
       setUser(response.data.user);
     } finally {
@@ -96,7 +116,7 @@ export function AuthProvider({ children }: AuthProviderProps) {
   };
 
   const value = useMemo(
-    () => ({ user, token, loading, login, register, logout, setUser }),
+    () => ({ user, token, loading, login, register, verifyCode, logout, setUser }),
     [user, token, loading],
   );
 

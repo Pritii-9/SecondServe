@@ -11,6 +11,9 @@ export interface UserDocument extends Document {
     type: "Point";
     coordinates: [number, number];
   };
+  isVerified?: boolean;
+  verificationCode?: string | null;
+  verificationCodeExpires?: Date | null;
   createdAt: Date;
   updatedAt: Date;
 }
@@ -32,6 +35,9 @@ const userSchema = new mongoose.Schema<UserDocument>(
         required: true,
       },
     },
+    isVerified: { type: Boolean, default: false },
+    verificationCode: { type: String, default: null },
+    verificationCodeExpires: { type: Date, default: null },
   },
   {
     timestamps: true,

@@ -33,6 +33,7 @@ export interface Listing {
   status: "available" | "claimed";
   claimedBy?: string;
   claimedAt?: string;
+  rescueStatus?: "pending" | "en_route" | "completed" | "cancelled";
   sourceType: "restaurant" | "shop" | "community";
   placeName?: string;
   distanceKm?: number;

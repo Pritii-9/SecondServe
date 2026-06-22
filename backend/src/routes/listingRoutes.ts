@@ -69,7 +69,7 @@ export function listingRouter(io: SocketIOServer) {
 
       const listing = await ListingModel.findOneAndUpdate(
         { _id: new mongoose.Types.ObjectId(idParam), status: "available" } as any,
-        { status: "claimed", claimedBy: receiverId, claimedAt: new Date() },
+        { status: "claimed", claimedBy: receiverId, claimedAt: new Date(), rescueStatus: "pending" },
         { new: true },
       ).lean();
 
@@ -79,6 +79,54 @@ export function listingRouter(io: SocketIOServer) {
 
       io.emit("listing_updated", listing);
       return res.json(listing);
+    } catch (error) {
+      next(error);
+    }
+  });
+
+  router.post("/:id/rescue", requireAuth(["receiver"]), async (req: Request, res: Response, next: NextFunction) => {
+    try {
+      const idParam = Array.isArray(req.params.id) ? req.params.id[0] : req.params.id;
+      if (!idParam) {
+        return res.status(400).json({ message: "Listing id is required." });
+      }
+
+      const receiverId = req.authUser?.id;
+      if (!receiverId) {
+        return res.status(401).json({ message: "Unauthorized" });
+      }
+
+      const { status } = req.body as { status: string };
+      if (!["pending", "en_route", "completed", "cancelled"].includes(status)) {
+        return res.status(400).json({ message: "Invalid rescue status." });
+      }
+
+      const listing = await ListingModel.findOneAndUpdate(
+        { _id: new mongoose.Types.ObjectId(idParam), claimedBy: receiverId } as any,
+        { rescueStatus: status },
+        { new: true },
+      ).lean();
+
+      if (!listing) {
+        return res.status(404).json({ message: "Listing not found or you don't have permission." });
+      }
+
+      io.emit("listing_updated", listing);
+      return res.json(listing);
+    } catch (error) {
+      next(error);
+    }
+  });
+
+  router.get("/my-listings", requireAuth(["donor"]), async (req: Request, res: Response, next: NextFunction) => {
+    try {
+      const donorId = req.authUser?.id;
+      if (!donorId) {
+        return res.status(401).json({ message: "Unauthorized" });
+      }
+
+      const listings = await ListingModel.find({ donorId }).sort({ createdAt: -1 }).lean();
+      return res.json({ listings });
     } catch (error) {
       next(error);
     }

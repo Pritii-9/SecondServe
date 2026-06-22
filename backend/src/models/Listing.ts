@@ -14,6 +14,7 @@ export interface ListingDocument extends Document {
   status: ListingStatus;
   claimedBy?: mongoose.Types.ObjectId;
   claimedAt?: Date;
+  rescueStatus?: "pending" | "en_route" | "completed" | "cancelled";
   sourceType: "restaurant" | "shop" | "community";
   placeName?: string;
   category: string;
@@ -43,6 +44,7 @@ const listingSchema = new mongoose.Schema<ListingDocument>(
     status: { type: String, required: true, enum: ["available", "claimed"], default: "available" },
     claimedBy: { type: mongoose.Schema.Types.ObjectId, ref: "User" },
     claimedAt: { type: Date },
+    rescueStatus: { type: String, enum: ["pending", "en_route", "completed", "cancelled"] },
     sourceType: { type: String, required: true, enum: ["restaurant", "shop", "community"], default: "community" },
     placeName: { type: String, trim: true },
     category: { type: String, required: true, default: "unknown" },

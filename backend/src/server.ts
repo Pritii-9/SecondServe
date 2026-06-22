@@ -12,6 +12,7 @@ import { UserModel } from "./models/User.js";
 import { listingRouter } from "./routes/listingRoutes.js";
 import { placesRouter } from "./routes/placesRoutes.js";
 import { requireAuth } from "./middleware/auth.js";
+import { sendVerificationEmail } from "./services/mailService.js";
 
 dotenv.config();
 
@@ -57,6 +58,10 @@ function createToken(user: UserDocument) {
   );
 }
 
+function generateVerificationCode(): string {
+  return Math.floor(100000 + Math.random() * 900000).toString();
+}
+
 app.get("/api/health", (_req, res) => {
   return res.json({ status: "ok", timestamp: new Date().toISOString() });
 });
@@ -81,16 +86,29 @@ app.post("/api/auth/register", async (req: Request, res: Response, next: NextFun
     }
 
     const hashedPassword = await bcrypt.hash(password, 12);
+    const code = generateVerificationCode();
+    const expiry = new Date(Date.now() + 15 * 60 * 1000);
+
     const user = await UserModel.create({
       name,
       email,
       password: hashedPassword,
       role,
       location,
+      isVerified: false,
+      verificationCode: code,
+      verificationCodeExpires: expiry,
     });
 
-    const token = createToken(user);
-    return res.status(201).json({ token, user: { id: user._id, name: user.name, email: user.email, role: user.role, location: user.location } });
+    sendVerificationEmail(user.email, code).catch((err) => {
+      console.error("[backend] Failed to send registration email:", err);
+    });
+
+    return res.status(201).json({
+      requiresVerification: true,
+      email: user.email,
+      message: "Verification code sent to your email.",
+    });
   } catch (error) {
     next(error);
   }
@@ -114,8 +132,138 @@ app.post("/api/auth/login", async (req: Request, res: Response, next: NextFuncti
       return res.status(401).json({ message: "Invalid credentials." });
     }
 
+    if (!user.isVerified) {
+      const code = generateVerificationCode();
+      user.verificationCode = code;
+      user.verificationCodeExpires = new Date(Date.now() + 15 * 60 * 1000);
+      await user.save();
+
+      sendVerificationEmail(user.email, code).catch((err) => {
+        console.error("[backend] Failed to send login verification email:", err);
+      });
+
+      return res.status(200).json({
+        requiresVerification: true,
+        email: user.email,
+        message: "Please verify your email address. A code has been sent.",
+      });
+    }
+
     const token = createToken(user);
-    return res.json({ token, user: { id: user._id, name: user.name, email: user.email, role: user.role, location: user.location } });
+    return res.json({
+      token,
+      user: {
+        id: user._id,
+        name: user.name,
+        email: user.email,
+        role: user.role,
+        location: user.location,
+      },
+    });
+  } catch (error) {
+    next(error);
+  }
+});
+
+app.post("/api/auth/verify", async (req: Request, res: Response, next: NextFunction) => {
+  try {
+    const { email, code } = req.body as { email: string; code: string };
+
+    if (!email || !code) {
+      return res.status(400).json({ message: "Email and code are required." });
+    }
+
+    const user = await UserModel.findOne({ email }).exec();
+    if (!user) {
+      return res.status(404).json({ message: "User not found." });
+    }
+
+    if (!user.verificationCode || user.verificationCode !== code) {
+      return res.status(400).json({ message: "Invalid verification code." });
+    }
+
+    if (user.verificationCodeExpires && user.verificationCodeExpires < new Date()) {
+      return res.status(400).json({ message: "Verification code has expired." });
+    }
+
+    user.isVerified = true;
+    user.verificationCode = null;
+    user.verificationCodeExpires = null;
+    await user.save();
+
+    const token = createToken(user);
+    return res.json({
+      token,
+      user: {
+        id: user._id,
+        name: user.name,
+        email: user.email,
+        role: user.role,
+        location: user.location,
+      },
+    });
+  } catch (error) {
+    next(error);
+  }
+});
+
+app.post("/api/auth/resend-code", async (req: Request, res: Response, next: NextFunction) => {
+  try {
+    const { email } = req.body as { email: string };
+
+    if (!email) {
+      return res.status(400).json({ message: "Email is required." });
+    }
+
+    const user = await UserModel.findOne({ email }).exec();
+    if (!user) {
+      return res.status(404).json({ message: "User not found." });
+    }
+
+    const code = generateVerificationCode();
+    user.verificationCode = code;
+    user.verificationCodeExpires = new Date(Date.now() + 15 * 60 * 1000);
+    await user.save();
+
+    await sendVerificationEmail(user.email, code);
+
+    return res.json({ message: "Verification code resent successfully." });
+  } catch (error) {
+    next(error);
+  }
+});
+
+app.put("/api/auth/profile", requireAuth(), async (req: Request, res: Response, next: NextFunction) => {
+  try {
+    const authUser = req.authUser;
+    if (!authUser) {
+      return res.status(401).json({ message: "Unauthorized" });
+    }
+
+    const { name, location } = req.body as {
+      name?: string;
+      location?: { type: "Point"; coordinates: [number, number] };
+    };
+
+    const user = await UserModel.findById(authUser.id).exec();
+    if (!user) {
+      return res.status(404).json({ message: "User not found." });
+    }
+
+    if (name) user.name = name;
+    if (location) user.location = location;
+
+    await user.save();
+
+    return res.json({
+      user: {
+        id: user._id.toString(),
+        name: user.name,
+        email: user.email,
+        role: user.role,
+        location: user.location,
+      },
+    });
   } catch (error) {
     next(error);
   }

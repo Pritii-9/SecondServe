@@ -4,9 +4,9 @@
   "type": "module",
   "main": "index.js",
   "scripts": {
- "dev": "tsx watch src/server.ts",
-  "build": "tsc",
-  "start": "node dist/server.js"
+    "dev": "tsx watch src/server.ts",
+    "build": "tsc",
+    "start": "node dist/server.js"
   },
   "keywords": [],
   "author": "",
@@ -20,6 +20,7 @@
     "groq-sdk": "^1.2.1",
     "jsonwebtoken": "^9.0.0",
     "mongoose": "^9.7.0",
+    "nodemailer": "^9.0.1",
     "socket.io": "^4.8.3"
   },
   "devDependencies": {
@@ -28,6 +29,7 @@
     "@types/express": "^5.0.6",
     "@types/jsonwebtoken": "^9.0.2",
     "@types/node": "^25.9.3",
+    "@types/nodemailer": "^8.0.1",
     "nodemon": "^3.1.14",
     "ts-node": "^10.9.2",
     "tsx": "^4.22.4",
