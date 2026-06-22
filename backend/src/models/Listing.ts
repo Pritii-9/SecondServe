@@ -1,6 +1,6 @@
 import mongoose, { Document, Model } from "mongoose";
 
-export type ListingStatus = "available" | "claimed";
+export type ListingStatus = "available" | "claimed" | "expired";
 
 export interface ListingDocument extends Document {
   donorId: mongoose.Types.ObjectId;
@@ -42,7 +42,7 @@ const listingSchema = new mongoose.Schema<ListingDocument>(
         required: true,
       },
     },
-    status: { type: String, required: true, enum: ["available", "claimed"], default: "available" },
+    status: { type: String, required: true, enum: ["available", "claimed", "expired"], default: "available" },
     claimedBy: { type: mongoose.Schema.Types.ObjectId, ref: "User" },
     claimedAt: { type: Date },
     rescueStatus: { type: String, enum: ["pending", "en_route", "completed", "cancelled"] },

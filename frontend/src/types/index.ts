@@ -30,7 +30,7 @@ export interface Listing {
     type: "Point";
     coordinates: [number, number];
   };
-  status: "available" | "claimed";
+  status: "available" | "claimed" | "expired";
   claimedBy?: string | { _id: string; name: string; email: string };
   claimedAt?: string;
   rescueStatus?: "pending" | "en_route" | "completed" | "cancelled";

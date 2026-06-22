@@ -299,11 +299,16 @@ app.use((error: Error, _req: Request, res: Response, _next: NextFunction) => {
   res.status(500).json({ message: "Internal server error", error: error.message });
 });
 
+import { initCronJobs } from "./services/cronService.js";
+
 async function startServer() {
   try {
     await connectDatabase();
-    server.listen(PORT, () => {
-      console.log(`[backend] Server listening on http://localhost:${PORT}`);
+
+    initCronJobs(io);
+
+    server.listen(PORT, "0.0.0.0", () => {
+      console.log(`[backend] Server listening on http://0.0.0.0:${PORT}`);
     });
 
     io.on("connection", (socket: Socket) => {

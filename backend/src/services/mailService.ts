@@ -130,3 +130,42 @@ export async function sendPickupVerifiedEmail(toEmail: string, receiverName: str
     console.error(`[backend] Failed to send verified email to ${toEmail}:`, error);
   }
 }
+
+export async function sendExpirationEmail(toEmail: string, donorName: string, description: string) {
+  if (!SMTP_USER || !SMTP_PASS) {
+    console.log(`[DEV MODE] Expiration Email to ${toEmail}: ${description} has expired.`);
+    return;
+  }
+
+  const transporter = nodemailer.createTransport({
+    host: SMTP_HOST,
+    port: SMTP_PORT,
+    secure: SMTP_PORT === 465,
+    auth: { user: SMTP_USER, pass: SMTP_PASS },
+  });
+
+  const mailOptions = {
+    from: `"secondServe" <${SMTP_USER}>`,
+    to: toEmail,
+    subject: "⚠️ Food Listing Expired",
+    html: `
+      <div style="font-family: sans-serif; max-width: 500px; margin: 0 auto; padding: 20px; border: 1px solid #1e293b; border-radius: 16px; background-color: #020617; color: #f1f5f9;">
+        <h2 style="color: #f59e0b; margin-bottom: 20px; font-weight: bold;">Listing Expired</h2>
+        <p style="font-size: 14px; color: #94a3b8; line-height: 1.6;">Hello ${donorName},</p>
+        <p style="font-size: 14px; color: #94a3b8; line-height: 1.6;">Your food listing has reached its expiration time and has been automatically removed from the live map:</p>
+        <div style="background-color: #0f172a; border: 1px solid #1e293b; padding: 15px; border-radius: 12px; font-size: 16px; font-weight: bold; text-align: center; color: #f59e0b; margin: 25px 0;">
+          ${description}
+        </div>
+        <p style="font-size: 14px; color: #94a3b8; line-height: 1.6;">To prevent this in the future, try posting your surplus food slightly earlier in the day!</p>
+        <hr style="border-color: #1e293b; margin: 25px 0;" />
+        <p style="font-size: 10px; color: #475569; text-align: center;">secondServe Platform &copy; 2026</p>
+      </div>
+    `,
+  };
+
+  try {
+    await transporter.sendMail(mailOptions);
+  } catch (error) {
+    console.error(`[backend] Failed to send expiration email to ${toEmail}:`, error);
+  }
+}
