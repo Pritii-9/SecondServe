@@ -86,8 +86,8 @@ export function listingRouter(io: SocketIOServer) {
 
       if (listing.donorId && typeof listing.donorId === "object" && 'email' in listing.donorId) {
          sendClaimNotificationEmail(
-           listing.donorId.email as string, 
-           listing.donorId.name as string, 
+           (listing.donorId as any).email as string, 
+           (listing.donorId as any).name as string, 
            req.authUser!.name || "A Receiver", 
            listing.description, 
            listing.quantity
