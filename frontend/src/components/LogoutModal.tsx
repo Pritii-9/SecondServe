@@ -1,4 +1,3 @@
-import React from "react";
 import { LogOut, X, AlertTriangle } from "lucide-react";
 
 interface LogoutModalProps {

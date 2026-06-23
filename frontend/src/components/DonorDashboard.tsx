@@ -96,7 +96,7 @@ export function DonorDashboard() {
     setMessage(null);
 
     try {
-      const response = await api.post<Listing>("/api/listings", {
+      await api.post<Listing>("/api/listings", {
         description,
         quantity,
         expiryTime,

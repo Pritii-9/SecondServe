@@ -1,7 +1,6 @@
 import { useState } from "react";
 import type { Listing } from "../types/index";
 import {
-  Calendar,
   Clock,
   MapPin,
   Tag,

@@ -132,8 +132,8 @@ export function ReceiverMap() {
 
   const handleSelectPlace = (place: Place) => {
     setSelectedPlace(place);
-    setCenter([place.location.coordinates[1], place.location.coordinates[0]]);
-    fetchNearby(place.location.coordinates[1], place.location.coordinates[0], radiusKm, place.name, filterType === "all" ? undefined : filterType);
+    setCenter([place.coordinates[1], place.coordinates[0]]);
+    fetchNearby(place.coordinates[1], place.coordinates[0], radiusKm, place.name, filterType === "all" ? undefined : filterType);
   };
 
   const handleUseCurrentLocation = () => {
