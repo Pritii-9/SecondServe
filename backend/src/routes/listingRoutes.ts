@@ -6,6 +6,7 @@ import { ListingModel } from "../models/Listing.js";
 import { analyzeListing } from "../services/groqService.js";
 import { sendClaimNotificationEmail, sendPickupVerifiedEmail } from "../services/mailService.js";
 import { requireAuth } from "../middleware/auth.js";
+import { getCache, setCache, invalidateCachePattern } from "../services/redisService.js";
 
 dotenv.config();
 
@@ -49,6 +50,9 @@ export function listingRouter(io: SocketIOServer) {
 
       const listing = await ListingModel.create(listingData as any);
 
+      // Invalidate the nearby cache so the new listing appears for everyone
+      await invalidateCachePattern("nearby:*");
+
       io.emit("new_listing", listing);
       return res.status(201).json(listing);
     } catch (error) {
@@ -90,6 +94,9 @@ export function listingRouter(io: SocketIOServer) {
          );
       }
 
+      // Invalidate cache because status changed
+      await invalidateCachePattern("nearby:*");
+
       io.emit("listing_updated", listing);
       return res.json(listing);
     } catch (error) {
@@ -123,6 +130,9 @@ export function listingRouter(io: SocketIOServer) {
       if (!listing) {
         return res.status(404).json({ message: "Listing not found or you don't have permission." });
       }
+
+      // Invalidate cache because status changed
+      await invalidateCachePattern("nearby:*");
 
       io.emit("listing_updated", listing);
       return res.json(listing);
@@ -202,6 +212,9 @@ export function listingRouter(io: SocketIOServer) {
          );
       }
 
+      // Invalidate cache because status changed
+      await invalidateCachePattern("nearby:*");
+
       io.emit("listing_updated", listing);
       return res.json(listing);
     } catch (error) {
@@ -221,6 +234,15 @@ export function listingRouter(io: SocketIOServer) {
       if (!lat || !lng) {
         return res.status(400).json({ message: "lat and lng query parameters are required." });
       }
+
+      const cacheKey = `nearby:${Number(lat).toFixed(2)}:${Number(lng).toFixed(2)}:${radiusKm}:${query || "all"}:${sourceType || "all"}`;
+      
+      const cachedData = await getCache(cacheKey);
+      if (cachedData) {
+        console.log(`[Redis] Cache HIT for ${cacheKey}`);
+        return res.json(cachedData);
+      }
+      console.log(`[Redis] Cache MISS for ${cacheKey}. Querying MongoDB...`);
 
       const location = {
         type: "Point" as const,
@@ -264,7 +286,10 @@ export function listingRouter(io: SocketIOServer) {
 
       await ListingModel.populate(listings, { path: "donorId", select: "name email" });
 
-      return res.json({ listings });
+      const responseData = { listings };
+      await setCache(cacheKey, responseData, 300); // Cache for 5 minutes
+
+      return res.json(responseData);
     } catch (error) {
       next(error);
     }

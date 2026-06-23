@@ -300,10 +300,12 @@ app.use((error: Error, _req: Request, res: Response, _next: NextFunction) => {
 });
 
 import { initCronJobs } from "./services/cronService.js";
+import { connectRedis } from "./services/redisService.js";
 
 async function startServer() {
   try {
     await connectDatabase();
+    await connectRedis();
 
     initCronJobs(io);
 
