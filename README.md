@@ -1,6 +1,8 @@
 # secondServe
 
 > **Zero-waste logistics for modern enterprises.**
+> 
+> 🌐 **Live Demo:** [https://second-serve-ten.vercel.app/](https://second-serve-ten.vercel.app/)
 
 **secondServe** is an enterprise-grade B2B SaaS platform designed to eliminate food waste by connecting high-volume food donors (restaurants, hotels, cafes) directly to local communities and NGOs in real-time. 
 
