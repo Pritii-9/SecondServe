@@ -14,7 +14,7 @@ export function initCronJobs(io: SocketIOServer) {
       const now = new Date();
       
       const expiredListings = await ListingModel.find({
-        status: "available",
+        status: "active",
         expiryTime: { $lt: now }
       }).populate("donorId", "name email");
 

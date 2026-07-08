@@ -30,10 +30,11 @@ export interface Listing {
     type: "Point";
     coordinates: [number, number];
   };
-  status: "available" | "claimed" | "expired";
+  status: "draft" | "active" | "claimed" | "expired" | "cancelled";
   claimedBy?: string | { _id: string; name: string; email: string };
   claimedAt?: string;
-  rescueStatus?: "pending" | "en_route" | "completed" | "cancelled";
+  rescueStatus?: "pending" | "en_route" | "arrived" | "completed" | "issue_reported";
+  issueReason?: string;
   sourceType: "restaurant" | "shop" | "community";
   placeName?: string;
   distanceKm?: number;

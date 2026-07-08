@@ -158,17 +158,17 @@ export function listingRouter(io: SocketIOServer) {
       const { reason, action } = req.body as { reason: string; action: "cancel_claim" | "mark_spoiled" };
       if (!reason || !action) return res.status(400).json({ message: "Reason and action are required." });
 
-      const listing = await ListingModel.findOne({ _id: new mongoose.Types.ObjectId(idParam), claimedBy: receiverId });
+      const listing = await ListingModel.findOne({ _id: new mongoose.Types.ObjectId(idParam), claimedBy: new mongoose.Types.ObjectId(receiverId) } as any);
       
       if (!listing) return res.status(404).json({ message: "Listing not found or unauthorized." });
       
       if (action === "cancel_claim") {
         // Return to active pool
         listing.status = "active";
-        listing.claimedBy = undefined;
-        listing.claimedAt = undefined;
-        listing.rescueStatus = undefined;
-        listing.pickupPin = undefined;
+        listing.claimedBy = undefined as any;
+        listing.claimedAt = undefined as any;
+        listing.rescueStatus = undefined as any;
+        listing.pickupPin = undefined as any;
       } else if (action === "mark_spoiled") {
         listing.status = "cancelled";
         listing.rescueStatus = "issue_reported";

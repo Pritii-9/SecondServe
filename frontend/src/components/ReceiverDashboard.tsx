@@ -85,7 +85,7 @@ export function ReceiverDashboard() {
             <p className="text-xs text-slate-500 dark:text-slate-600 mt-1 transition-colors duration-300">Switch to the map view to find and claim nearby food.</p>
           </div>
         ) : (
-          <div className="grid gap-6 sm:grid-cols-2">
+          <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
             {myClaims.map((listing) => (
               <div key={listing._id} className="transition-all duration-300 hover:-translate-y-1 hover:shadow-xl hover:shadow-cyan-500/10 dark:hover:shadow-cyan-500/5">
                 <ListingCard 

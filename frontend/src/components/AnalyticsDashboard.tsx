@@ -1,7 +1,7 @@
 import React, { useState, useEffect } from 'react';
-import { AreaChart, Area, XAxis, YAxis, CartesianGrid, Tooltip, ResponsiveContainer, BarChart, Bar, Legend } from 'recharts';
+import { AreaChart, Area, XAxis, YAxis, CartesianGrid, Tooltip, ResponsiveContainer } from 'recharts';
 import { Leaf, TrendingUp, Users } from 'lucide-react';
-import api from '../utils/api';
+import { api } from '../utils/api';
 
 const mockData = [
   { name: 'Week 1', meals: 120, co2: 300 },

@@ -10,12 +10,13 @@ const isUpstash = redisUrl.includes("upstash.io");
 
 const redisClient = createClient({
   url: redisUrl,
-  ...(isUpstash && {
-    socket: {
+  socket: {
+    reconnectStrategy: false,
+    ...(isUpstash && {
       tls: true,
-      rejectUnauthorized: false, // sometimes needed for external connections
-    },
-  }),
+      rejectUnauthorized: false,
+    }),
+  },
 });
 
 redisClient.on("error", (err) => console.error("[Redis] Client Error", err));
@@ -23,7 +24,11 @@ redisClient.on("connect", () => console.log(`[Redis] Connected to ${redisUrl}`))
 
 export async function connectRedis() {
   if (!redisClient.isOpen) {
-    await redisClient.connect();
+    try {
+      await redisClient.connect();
+    } catch (err) {
+      console.warn("[Redis] Could not connect to Redis. Running without cache.");
+    }
   }
 }
 

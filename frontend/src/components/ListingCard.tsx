@@ -64,6 +64,45 @@ export function ListingCard({
     minute: "2-digit",
   });
 
+  const getStatusBadge = () => {
+    const isClaimed = isOptimisticClaimed || listing.status === "claimed";
+    
+    if (!isClaimed) {
+      return (
+        <span className="inline-flex items-center gap-1 rounded-full bg-emerald-100 dark:bg-emerald-500/20 px-2.5 py-0.5 text-xs font-bold text-emerald-700 dark:text-emerald-400">
+          <Activity className="h-3 w-3" /> Available
+        </span>
+      );
+    }
+    
+    const status = listing.rescueStatus ?? "pending";
+    if (status === "pending") {
+      return (
+        <span className="inline-flex items-center gap-1 rounded-full bg-amber-100 dark:bg-amber-500/20 px-2.5 py-0.5 text-xs font-bold text-amber-700 dark:text-amber-400">
+          <Clock className="h-3 w-3" /> Pending
+        </span>
+      );
+    } else if (status === "en_route" || status === "arrived") {
+      return (
+        <span className="inline-flex items-center gap-1 rounded-full bg-cyan-100 dark:bg-cyan-500/20 px-2.5 py-0.5 text-xs font-bold text-cyan-700 dark:text-cyan-400">
+          <Navigation className="h-3 w-3" /> {status === "en_route" ? "En Route" : "Arrived"}
+        </span>
+      );
+    } else if (status === "completed") {
+      return (
+        <span className="inline-flex items-center gap-1 rounded-full bg-slate-100 dark:bg-slate-500/20 px-2.5 py-0.5 text-xs font-bold text-slate-700 dark:text-slate-400">
+          <Check className="h-3 w-3" /> Completed
+        </span>
+      );
+    } else {
+      return (
+        <span className="inline-flex items-center gap-1 rounded-full bg-rose-100 dark:bg-rose-500/20 px-2.5 py-0.5 text-xs font-bold text-rose-700 dark:text-rose-400">
+          <ShieldAlert className="h-3 w-3" /> {status}
+        </span>
+      );
+    }
+  };
+
   return (
     <div className="relative overflow-hidden rounded-3xl border border-slate-200 dark:border-slate-900 bg-white/60 dark:bg-slate-950/40 backdrop-blur-xl p-5 shadow-xl transition-all duration-300 hover:border-slate-300 dark:hover:border-slate-800 flex flex-col justify-between h-full gap-4">
       {/* Top Banner (Category & Date) */}
@@ -153,11 +192,8 @@ export function ListingCard({
             </div>
           )}
 
-          <div className="flex items-center gap-1.5">
-            <Activity className="h-3.5 w-3.5 text-slate-400 dark:text-slate-500" />
-            <span className="capitalize font-semibold text-slate-600 dark:text-slate-300">
-              {isOptimisticClaimed || listing.status === "claimed" ? `Claimed (${listing.rescueStatus ?? "pending"})` : "Available"}
-            </span>
+          <div className="flex items-center">
+            {getStatusBadge()}
           </div>
         </div>
 
