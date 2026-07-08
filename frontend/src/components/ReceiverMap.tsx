@@ -376,13 +376,13 @@ export function ReceiverMap() {
             <Marker
               key={listing._id}
               position={[listing.location.coordinates[1], listing.location.coordinates[0]]}
-              icon={listing.status === "available" ? availableIcon : claimedIcon}
+              icon={listing.status === "active" ? availableIcon : claimedIcon}
             >
               <Popup className="custom-leaflet-popup">
                 <div className="w-[300px] sm:w-[320px] -mx-4 -my-3">
                   <ListingCard
                     listing={listing}
-                    canClaim={listing.status === "available"}
+                    canClaim={listing.status === "active"}
                     onClaim={handleClaim}
                     canUpdateRescue={listing.claimedBy === user?.id}
                     onUpdateRescueStatus={handleUpdateRescueStatus}

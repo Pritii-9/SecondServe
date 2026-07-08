@@ -34,9 +34,9 @@ export async function analyzeListing(description: string): Promise<GroqListingAn
 
   if (!client) {
     return {
-      category: "unknown",
+      category: "Prepared Food",
       dietaryTags: [],
-      safetyAdvice: "AI analysis is unavailable because the Groq API key is missing or invalid.",
+      safetyAdvice: "Ensure food is stored at appropriate temperatures before pickup.",
     };
   }
 

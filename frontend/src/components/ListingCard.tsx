@@ -33,7 +33,7 @@ export function ListingCard({
   onUpdateRescueStatus,
   onVerifyPickup 
 }: ListingCardProps) {
-  const isAvailable = listing.status === "available" || listing.status === "active";
+  const isAvailable = listing.status === "active";
   const [pinInput, setPinInput] = useState("");
   const [verifying, setVerifying] = useState(false);
   

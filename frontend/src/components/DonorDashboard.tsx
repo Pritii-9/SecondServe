@@ -10,9 +10,7 @@ import {
   PlusCircle,
   Calendar,
   Package,
-  MapPin,
   AlertCircle,
-  CheckCircle2,
   FileText,
 } from "lucide-react";
 
