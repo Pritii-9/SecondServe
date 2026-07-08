@@ -40,7 +40,7 @@ export function listingRouter(io: SocketIOServer) {
         quantity,
         expiryTime: new Date(expiryTime),
         location,
-        status: "available",
+        status: "active",
         sourceType: sourceType ?? "community",
         ...(placeName?.trim() ? { placeName: placeName.trim() } : {}),
         category: analysis.category,
@@ -74,15 +74,23 @@ export function listingRouter(io: SocketIOServer) {
 
       const pickupPin = Math.floor(1000 + Math.random() * 9000).toString();
 
-      const listing = await ListingModel.findOneAndUpdate(
-        { _id: new mongoose.Types.ObjectId(idParam), status: "available" } as any,
-        { status: "claimed", claimedBy: receiverId, claimedAt: new Date(), rescueStatus: "pending", pickupPin },
-        { returnDocument: "after" },
-      ).populate("donorId", "name email").lean();
+      // Find the listing first to utilize Mongoose's built-in Optimistic Concurrency Control (__v)
+      const listing = await ListingModel.findOne({ _id: new mongoose.Types.ObjectId(idParam), status: "active" });
 
       if (!listing) {
         return res.status(404).json({ message: "Listing not found or already claimed." });
       }
+
+      listing.status = "claimed";
+      listing.claimedBy = new mongoose.Types.ObjectId(receiverId);
+      listing.claimedAt = new Date();
+      listing.rescueStatus = "pending";
+      listing.pickupPin = pickupPin;
+
+      // When .save() is called, Mongoose checks the __v (versionKey). 
+      // If another request saved this listing between findOne and save, a VersionError is thrown.
+      await listing.save();
+      await listing.populate("donorId", "name email");
 
       if (listing.donorId && typeof listing.donorId === "object" && 'email' in listing.donorId) {
          sendClaimNotificationEmail(
@@ -137,6 +145,45 @@ export function listingRouter(io: SocketIOServer) {
       io.emit("listing_updated", listing);
       return res.json(listing);
     } catch (error) {
+      next(error);
+    }
+  });
+
+  // State Machine Edge Case: Report Issue (e.g., car broke down, food spoiled)
+  router.post("/:id/report-issue", requireAuth(["receiver"]), async (req: Request, res: Response, next: NextFunction) => {
+    try {
+      const idParam = Array.isArray(req.params.id) ? req.params.id[0] : req.params.id;
+      const receiverId = req.authUser?.id;
+      
+      const { reason, action } = req.body as { reason: string; action: "cancel_claim" | "mark_spoiled" };
+      if (!reason || !action) return res.status(400).json({ message: "Reason and action are required." });
+
+      const listing = await ListingModel.findOne({ _id: new mongoose.Types.ObjectId(idParam), claimedBy: receiverId });
+      
+      if (!listing) return res.status(404).json({ message: "Listing not found or unauthorized." });
+      
+      if (action === "cancel_claim") {
+        // Return to active pool
+        listing.status = "active";
+        listing.claimedBy = undefined;
+        listing.claimedAt = undefined;
+        listing.rescueStatus = undefined;
+        listing.pickupPin = undefined;
+      } else if (action === "mark_spoiled") {
+        listing.status = "cancelled";
+        listing.rescueStatus = "issue_reported";
+        listing.issueReason = reason;
+      }
+
+      await listing.save();
+      await invalidateCachePattern("nearby:*");
+      io.emit("listing_updated", listing);
+      
+      return res.json(listing);
+    } catch (error) {
+      if (error instanceof mongoose.Error.VersionError) {
+        return res.status(409).json({ message: "Concurrency conflict. Please try again." });
+      }
       next(error);
     }
   });
@@ -249,7 +296,7 @@ export function listingRouter(io: SocketIOServer) {
         coordinates: [Number(lng), Number(lat)] as [number, number],
       };
 
-      const filters: Record<string, unknown> = { status: "available" };
+      const filters: Record<string, unknown> = { status: "active" };
       if (sourceType === "restaurant" || sourceType === "shop") {
         filters.sourceType = sourceType;
       }

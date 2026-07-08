@@ -1,6 +1,7 @@
 import mongoose, { Document, Model } from "mongoose";
 
 export type UserRole = "donor" | "receiver";
+export type WorkspaceRole = "admin" | "member";
 
 export interface UserDocument extends Document {
   name: string;
@@ -11,6 +12,8 @@ export interface UserDocument extends Document {
     type: "Point";
     coordinates: [number, number];
   };
+  workspaceId?: mongoose.Types.ObjectId;
+  workspaceRole?: WorkspaceRole;
   isVerified?: boolean;
   verificationCode?: string | null;
   verificationCodeExpires?: Date | null;
@@ -38,6 +41,8 @@ const userSchema = new mongoose.Schema<UserDocument>(
     isVerified: { type: Boolean, default: false },
     verificationCode: { type: String, default: null },
     verificationCodeExpires: { type: Date, default: null },
+    workspaceId: { type: mongoose.Schema.Types.ObjectId, ref: "Workspace", default: null },
+    workspaceRole: { type: String, enum: ["admin", "member"], default: "member" },
   },
   {
     timestamps: true,

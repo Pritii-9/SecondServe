@@ -33,9 +33,29 @@ export function ListingCard({
   onUpdateRescueStatus,
   onVerifyPickup 
 }: ListingCardProps) {
-  const isAvailable = listing.status === "available";
+  const isAvailable = listing.status === "available" || listing.status === "active";
   const [pinInput, setPinInput] = useState("");
   const [verifying, setVerifying] = useState(false);
+  
+  // Optimistic UI State
+  const [isOptimisticClaimed, setIsOptimisticClaimed] = useState(false);
+  const [isClaiming, setIsClaiming] = useState(false);
+
+  const handleOptimisticClaim = async () => {
+    if (!onClaim) return;
+    setIsClaiming(true);
+    setIsOptimisticClaimed(true); // Immediate UI update (Optimistic)
+    
+    try {
+      await onClaim(listing._id);
+    } catch (error) {
+      // Revert on failure
+      setIsOptimisticClaimed(false);
+      console.error("Optimistic claim failed", error);
+    } finally {
+      setIsClaiming(false);
+    }
+  };
 
   const formattedExpiry = new Date(listing.expiryTime).toLocaleString(undefined, {
     month: "short",
@@ -136,19 +156,31 @@ export function ListingCard({
           <div className="flex items-center gap-1.5">
             <Activity className="h-3.5 w-3.5 text-slate-400 dark:text-slate-500" />
             <span className="capitalize font-semibold text-slate-600 dark:text-slate-300">
-              {listing.status === "claimed" ? `Claimed (${listing.rescueStatus ?? "pending"})` : "Available"}
+              {isOptimisticClaimed || listing.status === "claimed" ? `Claimed (${listing.rescueStatus ?? "pending"})` : "Available"}
             </span>
           </div>
         </div>
 
-        {canClaim && isAvailable && onClaim && (
+        {canClaim && isAvailable && !isOptimisticClaimed && onClaim && (
           <button
             type="button"
-            onClick={() => onClaim(listing._id)}
-            className="w-full items-center justify-center rounded-2xl bg-emerald-500 hover:bg-emerald-400 px-4 py-3 text-xs font-bold tracking-wider uppercase text-white dark:text-slate-950 transition-all duration-200 flex gap-1.5 shadow-lg shadow-emerald-500/20 dark:shadow-emerald-500/10"
+            disabled={isClaiming}
+            onClick={handleOptimisticClaim}
+            className={`w-full items-center justify-center rounded-2xl px-4 py-3 text-xs font-bold tracking-wider uppercase text-white transition-all duration-200 flex gap-1.5 shadow-lg ${
+              isOptimisticClaimed 
+                ? "bg-indigo-500 hover:bg-indigo-400" 
+                : "bg-emerald-500 hover:bg-emerald-400 shadow-emerald-500/20 dark:shadow-emerald-500/10"
+            }`}
           >
-            <Check className="h-4 w-4 stroke-[3]" />
-            Claim Rescue
+            {isOptimisticClaimed ? (
+               <>
+                 <Check className="h-4 w-4 stroke-[3]" /> Claimed!
+               </>
+            ) : (
+               <>
+                 <Check className="h-4 w-4 stroke-[3]" /> Claim Rescue
+               </>
+            )}
           </button>
         )}
 
@@ -220,6 +252,8 @@ export function ListingCard({
             >
               <option value="pending">⏳ Pending Departure</option>
               <option value="en_route">🚚 En Route</option>
+              <option value="arrived">📍 Arrived at Location</option>
+              <option value="issue_reported">⚠️ Report Issue (e.g. Spoiled)</option>
               <option value="cancelled">❌ Cancelled</option>
             </select>
           </div>
