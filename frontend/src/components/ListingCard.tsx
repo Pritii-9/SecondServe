@@ -127,9 +127,18 @@ export function ListingCard({
           <h3 className="text-lg font-bold text-slate-900 dark:text-white tracking-tight leading-snug line-clamp-2 transition-colors duration-300" title={listing.description}>
             {listing.description}
           </h3>
-          {listing.placeName && (
-            <p className="mt-1 text-xs text-slate-500 dark:text-slate-400 font-medium transition-colors duration-300">📍 {listing.placeName}</p>
-          )}
+          <div className="mt-1.5 flex flex-col gap-0.5">
+            {listing.donorId && typeof listing.donorId === "object" && listing.donorId.name && (
+              <p className="text-sm text-slate-700 dark:text-slate-300 font-semibold transition-colors duration-300">
+                🏢 {listing.donorId.name}
+              </p>
+            )}
+            {listing.placeName && (
+              <p className="text-xs text-slate-500 dark:text-slate-400 font-medium transition-colors duration-300">
+                📍 {listing.placeName}
+              </p>
+            )}
+          </div>
         </div>
 
         {/* Details Grid */}
